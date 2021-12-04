@@ -7,12 +7,15 @@ public class GamePanel extends JPanel implements ActionListener {
 
 	static final int SCREEN_WIDTH = 600;
 	static final int SCREEN_HEIGHT = 600;
-	static final int UNIT_SIZE = 25;
+	static final int UNIT_SIZE = 20;
 	static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
-//	static final int DELAY = 100;
+	static final int DELAY = 100;
 	int delay = 200;
-	final int[] x = new int[GAME_UNITS];
-	final int[] y = new int[GAME_UNITS];
+	int playCount = 1;
+//	final int[] x = new int[GAME_UNITS];
+//	final int[] y = new int[GAME_UNITS];
+	int[] x = new int[GAME_UNITS];
+	int[] y = new int[GAME_UNITS];
 	int bodyParts = 6;
 	int applesEaten;
 	int appleX;
@@ -21,17 +24,24 @@ public class GamePanel extends JPanel implements ActionListener {
 	boolean running = false;
 	Timer timer;
 	Random random;
+	JButton button;
 	
 	GamePanel() {
 		
 		random = new Random();
+		button = new JButton("Restart");
+		button.setFont(new Font("Ink Free", Font.PLAIN, 30));
+		button.setVisible(false);
 		
+		this.add(button);
+			
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
 		this.setBackground(Color.black);
 		this.setFocusable(true);
 		this.addKeyListener(new MyKeyAdapter());
 		
 		startGame();
+		
 	}
 	
 	public void startGame() {
@@ -133,10 +143,13 @@ public class GamePanel extends JPanel implements ActionListener {
 			
 			bodyParts++;
 			applesEaten++;
+			
+			// increases the movement speed of the snake by lowering the delay
 			if(delay > 20) {
-				delay -= 10;
+				delay = 200 - 10*bodyParts;
 				timer.setDelay(delay);
 			}
+			
 			newApple();
 			
 		}
@@ -178,6 +191,33 @@ public class GamePanel extends JPanel implements ActionListener {
 		g.setFont(new Font("Ink Free", Font.BOLD, 75));
 		FontMetrics metrics2 = getFontMetrics(g.getFont());
 		g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
+		
+		button.setBounds(200, 500, 200, 50);
+		button.setForeground(Color.red);
+		button.setBackground(Color.black);
+		button.setVisible(true);
+		button.addActionListener(e -> restartGame());
+
+	}
+	
+	public void restartGame() {
+		
+		button.setVisible(false);
+		
+		playCount++;
+		//  with each restart the speed of the snake seems to increase even when reset to 200.
+		//  so I increased the delay exponentially in relations to the playCount
+		delay = DELAY*playCount*playCount;   
+		bodyParts = 6;
+		applesEaten = 0;
+		direction = 'R';
+		x = new int[GAME_UNITS];
+		y = new int[GAME_UNITS];
+		
+		newApple();
+		running = true;
+		timer = new Timer(delay, this);
+		timer.start();
 		
 	}
 	
