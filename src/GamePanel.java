@@ -27,10 +27,13 @@ public class GamePanel extends JPanel implements ActionListener {
 	JButton button;
 	
 	GamePanel() {
+//	GamePanel(JButton b) {
 		
+//		button = b;
 		random = new Random();
 		button = new JButton("Restart");
 		button.setFont(new Font("Ink Free", Font.PLAIN, 30));
+		button.setFocusable(false);
 		button.setVisible(false);
 		
 		this.add(button);
@@ -145,8 +148,8 @@ public class GamePanel extends JPanel implements ActionListener {
 			applesEaten++;
 			
 			// increases the movement speed of the snake by lowering the delay
-			if(delay > 20) {
-				delay = 200 - 10*bodyParts;
+			if(delay > 50) {
+				delay = 200 - 10*(bodyParts-6);
 				timer.setDelay(delay);
 			}
 			
