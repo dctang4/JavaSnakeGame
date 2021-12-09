@@ -12,6 +12,7 @@ public class GamePanel extends JPanel implements ActionListener {
 	static final int DELAY = 100;
 	int delay = 200;
 	int playCount = 1;
+	int bestScore = 0;
 //	final int[] x = new int[GAME_UNITS];
 //	final int[] y = new int[GAME_UNITS];
 	int[] x = new int[GAME_UNITS];
@@ -102,6 +103,10 @@ public class GamePanel extends JPanel implements ActionListener {
 		}
 		else {
 			
+			if(applesEaten > bestScore) {
+				bestScore = applesEaten;
+			}
+			
 			gameOver(g);
 			
 		}
@@ -189,11 +194,17 @@ public class GamePanel extends JPanel implements ActionListener {
 		FontMetrics metrics1 = getFontMetrics(g.getFont());
 		g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics1.stringWidth("Score: " + applesEaten))/2, g.getFont().getSize());
 		
+		// Game Best Score Text
+		g.setColor(Color.orange);
+		g.setFont(new Font("Ink Free", Font.ITALIC, 50));
+		FontMetrics metrics2 = getFontMetrics(g.getFont());
+		g.drawString(" Best Score: " + bestScore, (SCREEN_WIDTH - metrics2.stringWidth("Best Score: " + bestScore))/2, SCREEN_HEIGHT/4);
+		
 		// Game Over Text
 		g.setColor(Color.red);
 		g.setFont(new Font("Ink Free", Font.BOLD, 75));
-		FontMetrics metrics2 = getFontMetrics(g.getFont());
-		g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
+		FontMetrics metrics3 = getFontMetrics(g.getFont());
+		g.drawString("Game Over", (SCREEN_WIDTH - metrics3.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
 		
 		button.setBounds(200, 500, 200, 50);
 		button.setForeground(Color.red);
