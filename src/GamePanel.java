@@ -11,7 +11,7 @@ public class GamePanel extends JPanel implements ActionListener {
 	static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
 	static final int DELAY = 100;
 	int delay = 200;
-	int playCount = 1;
+	int playCount = 0;
 	int bestScore = 0;
 //	final int[] x = new int[GAME_UNITS];
 //	final int[] y = new int[GAME_UNITS];
@@ -25,26 +25,38 @@ public class GamePanel extends JPanel implements ActionListener {
 	boolean running = false;
 	Timer timer;
 	Random random;
-	JButton button;
+	JButton  button;
 	
 	GamePanel() {
 //	GamePanel(JButton b) {
 		
-//		button = b;
 		random = new Random();
-		button = new JButton("Restart");
+		
+//		button = b;
+		button = new JButton("Start");
 		button.setFont(new Font("Ink Free", Font.PLAIN, 30));
 		button.setFocusable(false);
-		button.setVisible(false);
-		
-		this.add(button);
+		button.addActionListener(e -> {
 			
+			if(playCount == 0) {
+				playCount++;
+				button.setVisible(false);
+				button.setText("Restart");
+				startGame();
+			}
+			else {
+				restartGame();
+			}
+			
+		});
+		button.setVisible(true);
+		
+		this.add( button);
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
 		this.setBackground(Color.black);
 		this.setFocusable(true);
+		this.setLayout(null);
 		this.addKeyListener(new MyKeyAdapter());
-		
-		startGame();
 		
 	}
 	
@@ -200,18 +212,22 @@ public class GamePanel extends JPanel implements ActionListener {
 		FontMetrics metrics2 = getFontMetrics(g.getFont());
 		g.drawString(" Best Score: " + bestScore, (SCREEN_WIDTH - metrics2.stringWidth("Best Score: " + bestScore))/2, SCREEN_HEIGHT/4);
 		
-		// Game Over Text
+		// Snake Game Title and Game Over Text
 		g.setColor(Color.red);
 		g.setFont(new Font("Ink Free", Font.BOLD, 75));
 		FontMetrics metrics3 = getFontMetrics(g.getFont());
-		g.drawString("Game Over", (SCREEN_WIDTH - metrics3.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
+		if(playCount == 0) {
+			g.drawString("Snake Game", (SCREEN_WIDTH - metrics3.stringWidth("Snake Game"))/2, SCREEN_HEIGHT/2);
+		}
+		else {
+			g.drawString("Game Over", (SCREEN_WIDTH - metrics3.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
+		}
 		
 		button.setBounds(200, 500, 200, 50);
 		button.setForeground(Color.red);
-		button.setBackground(Color.black);
+		button.setBackground(Color.black); 
 		button.setVisible(true);
-		button.addActionListener(e -> restartGame());
-
+		
 	}
 	
 	public void restartGame() {
@@ -219,7 +235,7 @@ public class GamePanel extends JPanel implements ActionListener {
 		button.setVisible(false);
 		
 		playCount++;
-		//  with each restart the speed of the snake seems to increase even when reset to 200.
+		//  with each restart the speed of the snake seems to increase even when restart to 200.
 		//  so I increased the delay exponentially in relations to the playCount
 		delay = DELAY*playCount*playCount;   
 		bodyParts = 6;
